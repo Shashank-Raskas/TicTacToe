@@ -15,7 +15,7 @@ function App() {
           <Player initialName='Player 1' symbol='X' isActive={activePlayer === 'X'}/>
           <Player initialName='Player 2' symbol='O' isActive={activePlayer === 'O'}/>
         </ol>
-        <GameBoard onSelectSquare={handleSelectSquare} activePlayerSymbol={activePlayer}/>
+        <GameBoard onSelectSquare={handleSelectSquare} activePlayerSymbol={activePlayer}/>  {/*lifting up the state where if two components can use a common state in the other component*/}
       </div>
     </main>
   );
