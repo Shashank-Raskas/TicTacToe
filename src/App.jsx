@@ -3,18 +3,26 @@ import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
 import { useState } from "react";
 
+function deriveActivePlayer(gameTurns) {
+  let currentPlayer = 'X';
+
+  if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
+    currentPlayer = 'O';
+  }
+
+  return currentPlayer;
+}
+
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
-  const [activePlayer, setActivePlayer] = useState('X')  //we are not using this as we are using the state in the game turns
+  // const [activePlayer, setActivePlayer] = useState('X')  //we are not using this as we are using the state in the game turns
 
+  const activePlayer = deriveActivePlayer(gameTurns);
   function handleSelectSquare(rowIndex, colIndex) {
-    setActivePlayer((curActivePlayer) => curActivePlayer === 'X' ? 'O' : 'X');   //stoped using this as we are using the state in the game turns
-    setGameTurns(prevTurns => {    {/*getting the state of the game turns*/}
-      let currentPlayer = 'X';
-      
-      if (prevTurns.length > 0 && prevTurns[0].player === 'X') {   //if the first player is X then the next player is O
-        currentPlayer = 'O';  
-      }
+    // setActivePlayer((curActivePlayer) => curActivePlayer === 'X' ? 'O' : 'X');   //stoped using this as we are using the state in the game turns
+    setGameTurns(prevTurns => {
+      {/*getting the state of the game turns*/ }
+      const currentPlayer = deriveActivePlayer(prevTurns); //reusing the deriveActivePlayer function to get the current player
 
       const updateTurns = [{ square: { row: rowIndex, col: colIndex }, player: currentPlayer }, // currrent turn data
       ...prevTurns,  //spread operator to get the all the previous turns, prevTurns contains all the moves made so far in the game (from previous turns).
@@ -56,13 +64,13 @@ function App() {
     <main>
       <div id="game-container">
         <ol id='players' className="highlight-player">
-          <Player initialName='Player 1' symbol='X' isActive={activePlayer === 'X'} />
+          <Player initialName='Player 1' symbol='X' isActive={gameTurns.player === 'X'} />
           <Player initialName='Player 2' symbol='O' isActive={activePlayer === 'O'} />
         </ol>
         {/* <Parent /> */}
         <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />  {/*lifting up the state where if two components can use a common state in the other component*/}
       </div>
-      <Log turns={gameTurns}/>
+      <Log turns={gameTurns} />
     </main>
   );
 }
