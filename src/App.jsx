@@ -29,7 +29,7 @@ function App() {
 
   const activePlayer = deriveActivePlayer(gameTurns);
 
-  let gameBoard = initialGameBoard;
+  let gameBoard = [...initialGameBoard.map(array => [...array])]; //deep copy of the initialGameBoard so initilGameBoard is not mutated and gameboard is a new array with new memory location and values
 
     for (const turn of gameTurns) {
         const { square, player } = turn;
@@ -92,6 +92,10 @@ function App() {
   //     </div>
   //   );
   // }
+  
+  function handleRestart() {
+    setGameTurns([]);
+  }
 
   return (
     <main>
@@ -101,7 +105,7 @@ function App() {
           <Player initialName='Player 2' symbol='O' isActive={activePlayer === 'O'} />
         </ol>
         {/* <Parent /> */}
-        {(winner || hasDraw) && <GameOver winner={winner} />}
+        {(winner || hasDraw) && <GameOver winner={winner} onRestart={handleRestart} />}
         <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard} />  {/*lifting up the state where if two components can use a common state in the other component*/}
       </div>
       <Log turns={gameTurns} />
