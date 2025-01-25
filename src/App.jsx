@@ -5,10 +5,10 @@ import { useState } from "react";
 
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
-  const [activePlayer, setActivePlayer] = useState('X')
+  //const [activePlayer, setActivePlayer] = useState('X')  //we are not using this as we are using the state in the game turns
 
   function handleSelectSquare(rowIndex, colIndex) {
-    setActivePlayer((curActivePlayer) => curActivePlayer === 'X' ? 'O' : 'X');
+    // setActivePlayer((curActivePlayer) => curActivePlayer === 'X' ? 'O' : 'X');   //stoped using this as we are using the state in the game turns
     setGameTurns(prevTurns => {    {/*getting the state of the game turns*/}
       let currentPlayer = 'X';
       
@@ -60,7 +60,7 @@ function App() {
           <Player initialName='Player 2' symbol='O' isActive={activePlayer === 'O'} />
         </ol>
         {/* <Parent /> */}
-        <GameBoard onSelectSquare={handleSelectSquare} activePlayerSymbol={activePlayer} />  {/*lifting up the state where if two components can use a common state in the other component*/}
+        <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />  {/*lifting up the state where if two components can use a common state in the other component*/}
       </div>
       <Log />
     </main>
