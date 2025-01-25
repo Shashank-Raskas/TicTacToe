@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Player({ initialName, symbol, isActive}) {
+export default function Player({ initialName, symbol, isActive, onChangeName }) {
     const [playerName, setPlayerName] = useState(initialName);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -9,6 +9,11 @@ export default function Player({ initialName, symbol, isActive}) {
     function editName() {
         // setIsEditing(!isEditing);   //made it that way to switch the button name as it sticks to saveonce edit is click with out terenary or !
         setIsEditing(editing => !editing); //if we use this function form, the state change would be instant   ,the one inside it is currrent state to be set
+       
+        if(isEditing)  //if its editing
+        {
+            onChangeName(symbol, playerName);  //passing the symbol and the player name to the parent component
+        }
     }
     
     function handleChange(event) {   //event is by default passed from onChange
