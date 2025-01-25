@@ -5,8 +5,12 @@ import { WINNING_COMBINATIONS } from "./winning-combinations";
 import GameOver from "./components/GameOver";
 import { useState } from "react";
 
+const PLAYERS ={
+  X : 'Player 1',
+  O : 'Player 2'
+}
 
-const initialGameBoard = [
+const INITIAL_GAME_BOARD = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
@@ -22,40 +26,44 @@ function deriveActivePlayer(gameTurns) {
   return currentPlayer;
 }
 
+function deriveWinner(gameBoard, players) {
+  let winner = null;
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol = gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol = gameBoard[combination[1].row][combination[1].column];
+    const thridSquareSymbol = gameBoard[combination[2].row][combination[2].column];
+
+    if (firstSquareSymbol && firstSquareSymbol === secondSquareSymbol && firstSquareSymbol === thridSquareSymbol) {
+      winner = players[firstSquareSymbol];
+    }
+  }
+  return winner;
+}
+
+function deriveGameBoard(gameTurns) {
+  let gameBoard = [...INITIAL_GAME_BOARD.map(array => [...array])]; //deep copy of the initialGameBoard so initilGameBoard is not mutated and gameboard is a new array with new memory location and values
+
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+
+    gameBoard[row][col] = player;
+  }
+  return gameBoard;
+}
+
 function App() {
-  const[players,setPlayers] = useState({
-    'X': 'Player 1',
-    'O': 'Player 2',
-  });
+  const [players, setPlayers] = useState(PLAYERS);
 
   const [gameTurns, setGameTurns] = useState([]);
   // const [hasWinner,setHasWinner] = useState(false); //we are not using this as we are using the winner to determine the winner
   // const [activePlayer, setActivePlayer] = useState('X')  //we are not using this as we are using the state in the game turns
 
   const activePlayer = deriveActivePlayer(gameTurns);
-
-  let gameBoard = [...initialGameBoard.map(array => [...array])]; //deep copy of the initialGameBoard so initilGameBoard is not mutated and gameboard is a new array with new memory location and values
-
-    for (const turn of gameTurns) {
-        const { square, player } = turn;
-        const { row, col } = square;
-
-        gameBoard[row][col] = player;
-    }
-
-    let winner = null;
-  for (const combination of WINNING_COMBINATIONS) {
-    const firstSquareSymbol = gameBoard[combination[0].row][combination[0].column];
-    const secondSquareSymbol = gameBoard[combination[1].row][combination[1].column];
-    const thridSquareSymbol = gameBoard[combination[2].row][combination[2].column];
-
-    if(firstSquareSymbol && firstSquareSymbol === secondSquareSymbol && firstSquareSymbol === thridSquareSymbol){
-      winner = players[firstSquareSymbol];
-    }
-  }
-  
+  const gameBoard = deriveGameBoard(gameTurns);
+  const winner = deriveWinner(gameBoard, players);
   const hasDraw = gameTurns.length === 9 && !winner;
-  
+
   function handleSelectSquare(rowIndex, colIndex) {
     // setActivePlayer((curActivePlayer) => curActivePlayer === 'X' ? 'O' : 'X');   //stoped using this as we are using the state in the game turns
     setGameTurns(prevTurns => {
@@ -97,12 +105,12 @@ function App() {
   //     </div>
   //   );
   // }
-  
+
   function handleRestart() {
     setGameTurns([]);
   }
 
-  function handlePlayerNameChange(symbol, newName) {  
+  function handlePlayerNameChange(symbol, newName) {
     setPlayers(prevPlayers => {
       return {
         ...prevPlayers,            //spread operator to get the previous players
@@ -116,8 +124,8 @@ function App() {
     <main>
       <div id="game-container">
         <ol id='players' className="highlight-player">
-          <Player initialName='Player 1' symbol='X' isActive={activePlayer === 'X'} onChangeName={handlePlayerNameChange}/>
-          <Player initialName='Player 2' symbol='O' isActive={activePlayer === 'O'} onChangeName={handlePlayerNameChange}/>
+          <Player initialName={PLAYERS.X} symbol='X' isActive={activePlayer === 'X'} onChangeName={handlePlayerNameChange} />
+          <Player initialName={PLAYERS.O} symbol='O' isActive={activePlayer === 'O'} onChangeName={handlePlayerNameChange} />
         </ol>
         {/* <Parent /> */}
         {(winner || hasDraw) && <GameOver winner={winner} onRestart={handleRestart} />}
